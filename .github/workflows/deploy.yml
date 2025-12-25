@@ -2,7 +2,7 @@ name: build-and-deploy-openshift
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
 
 jobs:
   deploy:
