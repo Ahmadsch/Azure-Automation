@@ -17,8 +17,8 @@ jobs:
 
       - name: Login IBM Cloud
         run: |
-          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-central
-
+          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-de
+          ibmcloud cr region-set eu-de
       - name: Login Container Registry
         run: |
           ibmcloud cr login
