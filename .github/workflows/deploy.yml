@@ -34,7 +34,7 @@ jobs:
 
       - name: Select project
         run: |
-          oc new-project demo || oc project demo
+          oc project schurbaji-ahmad-dev
 
       - name: Deploy to OpenShift
         run: |
