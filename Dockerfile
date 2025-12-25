@@ -5,10 +5,9 @@ WORKDIR /build
 COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw .
-RUN ./mvnw -q -DskipTests dependency:go-offline
-
+RUN mvn -q -DskipTests dependency:go-offline
 COPY src src
-RUN ./mvnw -q -DskipTests package
+RUN mvn -q -DskipTests package
 
 # run
 FROM eclipse-temurin:21-jre
