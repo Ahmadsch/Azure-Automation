@@ -35,14 +35,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.azure.spring</groupId>
-            <artifactId>spring-cloud-azure-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.azure.spring</groupId>
-            <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,51 +49,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.azure.spring</groupId>
-                <artifactId>spring-cloud-azure-dependencies</artifactId>
-                <version>${spring-cloud-azure.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.microsoft.azure</groupId>
-                <artifactId>azure-container-apps-maven-plugin</artifactId>
-                <version>0.1.0</version>
-                <configuration>
-                    <subscriptionId>your-subscription-id</subscriptionId>
-                    <resourceGroup>your-resource-group</resourceGroup>
-                    <appEnvironmentName>your-app-environment-name</appEnvironmentName>
-                    <region>your-region</region>
-                    <appName>devOps-demo-app</appName>
-                    <containers>
-                        <container>
-                            <type>code</type>
-                            <directory>${project.basedir}</directory>
-                        </container>
-                    </containers>
-                    <ingress>
-                        <external>true</external>
-                        <targetPort>8080</targetPort>
-                    </ingress>
-                    <scale>
-                        <minReplicas>0</minReplicas>
-                        <maxReplicas>10</maxReplicas>
-                    </scale>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

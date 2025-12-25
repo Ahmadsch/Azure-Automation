@@ -1,83 +1,43 @@
-name: deploy-aca
+name: build-and-deploy-openshift
 
 on:
   push:
     branches: ["master"]
 
-permissions:
-  id-token: write
-  contents: read
-
-env:
-  LOCATION: westeurope
-  RG: rg-spring-aca
-  ACR: myspringacaacr12345
-  ENV_NAME: aca-env
-  APP_NAME: spring-aca
-  IMAGE_REPO: spring-aca
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Azure login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Register provider
-        run: az provider register --namespace Microsoft.App
-
-      - name: Create resource group (Bicep)
+      - name: Install IBM Cloud CLI
         run: |
-          az deployment sub create \
-            -l $LOCATION \
-            -f infra/00-rg.bicep \
-            -p rgName=$RG location=$LOCATION
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
 
-      - name: Create ACR + ACA environment (Bicep)
+      - name: Login IBM Cloud
         run: |
-          az deployment group create \
-            -g $RG \
-            -f infra/01-infra.bicep \
-            -p location=$LOCATION acrName=$ACR envName=$ENV_NAME
+          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-central
 
-      - name: Build and push image to ACR
+      - name: Login Container Registry
         run: |
-          SERVER=$(az acr show -n $ACR -g $RG --query loginServer -o tsv)
-          USER=$(az acr credential show -n $ACR -g $RG --query username -o tsv)
-          PASS=$(az acr credential show -n $ACR -g $RG --query "passwords[0].value" -o tsv)
+          ibmcloud cr login
 
-          echo "$PASS" | docker login "$SERVER" -u "$USER" --password-stdin
-
-          TAG=${GITHUB_SHA::7}
-          IMAGE="$SERVER/$IMAGE_REPO:$TAG"
-          docker build -t "$IMAGE" .
-          docker push "$IMAGE"
-
-          echo "SERVER=$SERVER" >> $GITHUB_ENV
-          echo "USER=$USER" >> $GITHUB_ENV
-          echo "PASS=$PASS" >> $GITHUB_ENV
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-
-      - name: Deploy Container App (Bicep)
+      - name: Build and push image
         run: |
-          az deployment group create \
-            -g $RG \
-            -f infra/02-app.bicep \
-            -p location=$LOCATION \
-               appName=$APP_NAME \
-               envName=$ENV_NAME \
-               image=$IMAGE \
-               acrServer=$SERVER \
-               acrUsername=$USER \
-               acrPassword="$PASS"
+          docker build -t icr.io/demo/spring-app:latest .
+          docker push icr.io/demo/spring-app:latest
 
-      - name: Print URL
+      - name: Login OpenShift
         run: |
-          FQDN=$(az containerapp show -n $APP_NAME -g $RG --query "properties.configuration.ingress.fqdn" -o tsv)
-          echo "APP_URL=https://$FQDN"
+        oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=https://api.rm2.thpm.p1.openshiftapps.com:6443
+
+      - name: Deploy to OpenShift
+        run: |
+          oc apply -f k8s/deployment.yaml
+          oc apply -f k8s/service.yaml
+          oc apply -f k8s/route.yaml
+
+      - name: Get App URL
+        run: |
+          oc get route spring-app
