@@ -13,6 +13,7 @@ jobs:
 
       - name: Build Quarkus app
         run: |
+          chmod +x mvnw
           ./mvnw clean package -DskipTests
       - name: Docker Hub login
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
