@@ -11,10 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Docker Hub login
-        run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
-          docker login -u ahmadsch --password-stdin
+  - name: Docker Hub login
+    run: |
+      echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+        -u "${{ secrets.DOCKERHUB_USERNAME }}" \
+        --password-stdin
+
 
       - name: Build and push image
         run: |
