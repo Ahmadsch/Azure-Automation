@@ -6,5 +6,6 @@ spec:
   selector:
     app: quarkus-app
   ports:
-    - port: 80
-      targetPort: 8080
+    - name: http
+      port: 8080        # <- Service-Port
+      targetPort: 8080 # <- Container-Port

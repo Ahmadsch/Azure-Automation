@@ -6,3 +6,5 @@ spec:
   to:
     kind: Service
     name: quarkus-app
+  port:
+    targetPort: 8080   # <- MUSS Service.port matchen
