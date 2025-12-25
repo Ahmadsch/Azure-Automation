@@ -15,5 +15,6 @@ spec:
       containers:
         - name: app
           image: ahmadsch/spring-app:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
