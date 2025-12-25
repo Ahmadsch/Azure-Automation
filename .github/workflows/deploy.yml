@@ -19,6 +19,13 @@ jobs:
           docker build -t ahmadsch/spring-app:latest .
           docker push ahmadsch/spring-app:latest
 
+      - name: Install OpenShift CLI
+        run: |
+          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz
+          tar -xzf openshift-client-linux.tar.gz
+          sudo mv oc /usr/local/bin/
+          oc version
+
       - name: Login OpenShift
         run: |
           oc login \
