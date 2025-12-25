@@ -13,7 +13,7 @@ spec:
         app: quarkus-app
     spec:
       containers:
-        - name: app
+        - name: quarkus-app
           image: ahmadsch/quarkus-app:latest
           imagePullPolicy: Always
           ports:
