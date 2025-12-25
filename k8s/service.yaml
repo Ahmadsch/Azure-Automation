@@ -7,5 +7,5 @@ spec:
     app: quarkus-app
   ports:
     - name: http
-      port: 8080        # <- Service-Port
-      targetPort: 8080 # <- Container-Port
+      port: 8080
+      targetPort: 8080

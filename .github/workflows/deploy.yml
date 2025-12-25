@@ -2,7 +2,7 @@ name: build-and-deploy-openshift
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -56,4 +56,4 @@ jobs:
 
       - name: Get App URL
         run: |
-          oc get route spring-app
+          oc get route quarkus-app
