@@ -10,14 +10,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Build Quarkus app
+        run: |
+          ./mvnw clean package -DskipTests
       - name: Docker Hub login
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
 
       - name: Build and push image
-        run: |
-          docker build -t ahmadsch/spring-app:latest .
-          docker push ahmadsch/spring-app:latest
+        run:  |
+          docker build -f src/main/docker/Dockerfile.jvm \
+            -t ahmadsch/quarkus-app:latest .
+          docker push ahmadsch/quarkus-app:latest
 
       - name: Install OpenShift CLI
         run: |

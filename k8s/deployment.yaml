@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-app
+  name: quarkus-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spring-app
+      app: quarkus-app
   template:
     metadata:
       labels:
-        app: spring-app
+        app: quarkus-app
     spec:
       containers:
         - name: app
-          image: ahmadsch/spring-app:latest
+          image: ahmadsch/quarkus-app:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

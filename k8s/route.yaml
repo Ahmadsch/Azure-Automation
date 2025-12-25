@@ -1,8 +1,8 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: spring-app
+  name: quarkus-app
 spec:
   to:
     kind: Service
-    name: spring-app
+    name: quarkus-app
