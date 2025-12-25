@@ -2,7 +2,7 @@ name: build-and-deploy-openshift
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -21,11 +21,8 @@ jobs:
           ibmcloud target -g Default
           ibmcloud plugin install container-registry -f
           ibmcloud cr region-set eu-de
-
-      - name: Login Container Registry
-        run: |
-          ibmcloud cr namespace-add demo
           ibmcloud cr login
+          ibmcloud cr namespace-add demo || true
 
       - name: Build and push image
         run: |
@@ -35,6 +32,10 @@ jobs:
       - name: Login OpenShift
         run: |
           oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=https://api.rm2.thpm.p1.openshiftapps.com:6443
+
+      - name: Select project
+        run: |
+          oc new-project demo || oc project demo
 
       - name: Deploy to OpenShift
         run: |
