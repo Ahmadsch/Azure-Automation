@@ -11,27 +11,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install IBM Cloud CLI
+      - name: Docker Hub login
         run: |
-          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-
-      - name: Login IBM Cloud
-        run: |
-          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-de
-          ibmcloud target -g Default
-          ibmcloud plugin install container-registry -f
-          ibmcloud cr region-set eu-de
-          ibmcloud cr login
-          ibmcloud cr namespace-add demo || true
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
+          docker login -u ahmadsch --password-stdin
 
       - name: Build and push image
         run: |
-          docker build -t icr.io/demo/spring-app:latest .
-          docker push icr.io/demo/spring-app:latest
+          docker build -t ahmadsch/spring-app:latest .
+          docker push ahmadsch/spring-app:latest
 
       - name: Login OpenShift
         run: |
-          oc login --token=${{ secrets.OPENSHIFT_TOKEN }} --server=https://api.rm2.thpm.p1.openshiftapps.com:6443
+          oc login \
+            --token=${{ secrets.OPENSHIFT_TOKEN }} \
+            --server=https://api.rm2.thpm.p1.openshiftapps.com:6443
 
       - name: Select project
         run: |
