@@ -24,6 +24,7 @@ jobs:
 
       - name: Login Container Registry
         run: |
+          ibmcloud cr namespace-add demo
           ibmcloud cr login
 
       - name: Build and push image
